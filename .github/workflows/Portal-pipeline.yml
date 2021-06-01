@@ -16,9 +16,6 @@ env:
   TAG: "${{github.event.inputs.Tag}}"
   TYPE: "${{github.event.inputs.Type}}"
   MODULE: "${{github.event.inputs.Module}}"
-  FRONTENDIMAGE: "${{github.event.inputs.FrontendImage}}"
-  GRAPHQLIMAGE: "${{github.event.inputs.GraphqlServerImage}}"
-  AUTHIMAGE: "${{github.event.inputs.AuthServerImage}}"
 
 # Jobs for deploying and testing litmus-portal on a KinD Cluster
 jobs:
@@ -45,5 +42,5 @@ jobs:
           chmod 755 ./litmus/install-portal.sh
           ./litmus/install-portal.sh
         env:
-          PORTAL_VERSION: env.TAG
+          PORTAL_VERSION: ${{ env.Tag }}
           LOAD_BALANCER: "false"
