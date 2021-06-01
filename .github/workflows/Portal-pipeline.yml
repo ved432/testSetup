@@ -1,0 +1,49 @@
+name: Portal-E2E Pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      Tag:
+        default: "ci"
+
+      Type:
+        default: "Manifest"
+
+      Module:
+        default: "All"
+
+# All Environments variables declared and set here.
+env:
+  TAG: "${{github.event.inputs.Tag}}"
+  TYPE: "${{github.event.inputs.Type}}"
+  MODULE: "${{github.event.inputs.Module}}"
+  FRONTENDIMAGE: "${{github.event.inputs.FrontendImage}}"
+  GRAPHQLIMAGE: "${{github.event.inputs.GraphqlServerImage}}"
+  AUTHIMAGE: "${{github.event.inputs.AuthServerImage}}"
+
+# Jobs for deploying and testing litmus-portal on a KinD Cluster
+jobs:
+  Kind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setting up Main Cluster
+        uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: "v0.9.0"
+          name: "portal-agent"
+
+      - name: Configuring and Testing the Cluster Installation
+        run: |
+          kubectl cluster-info --context kind-portal-agent
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
+      - name: Deploying Litmus-Portal using **k8s-manifest**
+        if: ${{env.TYPE == 'Manifest'}}
+        run: |
+          chmod 755 ./litmus/install-portal.sh
+          ./litmus/install-portal.sh
+        env:
+          PORTAL_VERSION: env.TAG
+          LOAD_BALANCER: "false"
