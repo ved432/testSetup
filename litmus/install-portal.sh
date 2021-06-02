@@ -14,10 +14,10 @@ loadBalancer=${LOAD_BALANCER}
 # cp $path/.kube/admin.conf ~/.kube/config
 
 echo "----------------Installing Litmus-Portal----------------------"
-wget https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
-manifest_image_update $version cluster-k8s-manifest.yml
+curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
+manifest_image_update $version litmus-portal-setup.yml
 
-kubectl apply -f cluster-k8s-manifest.yml
+kubectl apply -f litmus-portal-setup.yml
 
 ## TODO: To be Removed
 kubectl get pods -n litmus

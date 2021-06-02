@@ -72,6 +72,7 @@ jobs:
 
       - name: Running Parallel tests
         uses: cypress-io/github-action@v2
+        if: always()
         continue-on-error: false
         with:
           spec: cypress/integration/Parallel_Tests/**/*.spec.js

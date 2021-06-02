@@ -13,8 +13,8 @@ version=${PORTAL_VERSION}
 # cp $path/.kube/admin.conf ~/.kube/config
 
 # Shutting down the Litmus-Portal Setup
-wget https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
+curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-cleanup.yml
 
-manifest_image_update $version cluster-k8s-manifest.yml
+manifest_image_update $version litmus-portal-cleanup.yml
 
-kubectl delete -f cluster-k8s-manifest.yml
+kubectl delete -f litmus-portal-cleanup.yml
