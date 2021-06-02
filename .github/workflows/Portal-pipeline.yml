@@ -82,8 +82,8 @@ jobs:
           kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
           kubectl config use-context kind-${{ env.EXTERNAL_AGENT }}
           sudo apt-get install expect
-          chmod 755 litmusctl/litmusctl.sh
-          litmusctl/litmusctl.sh "http://localhost:3001" 1
+          chmod 755 litmus/litmusctl-register.sh
+          litmus/litmusctl.sh "http://localhost:3001" 1
 
       # TODO: Additional Tests will be added from here
 
