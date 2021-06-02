@@ -45,7 +45,8 @@ describe("Testing the create Workflow Utility", () => {
   it("Checking Workflow Browsing Table for scheduled workflow", () => {
     cy.GraphqlWait("workflowDetails", "listWorkflows");
     cy.visit("/workflows");
-    cy.wait("@listWorkflows");
+    cy.wait("@listWorkflows").its("response.statusCode").should("eq", 200);
+    cy.wait(1000);
     cy.get("table")
       .find("tr")
       .eq(1)
@@ -64,7 +65,8 @@ describe("Testing the create Workflow Utility", () => {
   it("Checking Schedules Table for scheduled Workflow", () => {
     cy.GraphqlWait("scheduleDetails", "listSchedules");
     cy.get("[data-cy=browseSchedule]").click();
-    cy.wait("@listSchedules");
+    cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+    cy.wait(1000);
     cy.get("table")
       .find("tr")
       .eq(1)

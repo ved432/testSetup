@@ -75,9 +75,9 @@ describe("Testing the Teaming section", () => {
     cy.get("[data-cy=inviteNewMemberButton]").click();
     cy.get("[data-cy=inviteNewMemberModal]").should("be.visible");
     //Test if new invite got sent
-    cy.get("[data-cy=modal]").within(() => {
-      cy.contains("No users available.").should("not.be.visible");
-    });
+    // cy.get("[data-cy=modal]").within(() => {
+    //   cy.contains("No users available.").should("not.be.visible");
+    // });
   });
 
   it("Search the new Member and invite them as Viewer", () => {

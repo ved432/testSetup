@@ -6,7 +6,6 @@
   "defaultCommandTimeout": 10000,
   "chromeWebSecurity": false,
   "video": false,
-  "experimentalNetworkStubbing": true,
   "env": {
     "authURL": "/auth",
     "apiURL": "/api"

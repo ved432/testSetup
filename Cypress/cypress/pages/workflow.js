@@ -4,6 +4,7 @@
 
 Cypress.Commands.add("chooseAgent", (Agent) => {
   cy.get('[type="radio"]').eq(Agent).check();
+  cy.get('[type="radio"]').eq(Agent).should("be.checked");
 });
 
 //// *******************Choose Workflow Page *****************************
@@ -11,29 +12,40 @@ Cypress.Commands.add("chooseAgent", (Agent) => {
 Cypress.Commands.add("chooseWorkflow", (option, subOption) => {
   cy.get("[data-cy=WorkflowsRadioGroup]").should("be.visible");
   if (option == 0) {
+    cy.wait(180);
     cy.get("[data-cy=PredefinedWorkflowsRadioButton] :radio").check();
+    cy.get("[data-cy=PredefinedWorkflowsRadioButton] :radio").should(
+      "be.checked"
+    );
     cy.get("[data-cy=PredefinedWorkflowsRadioGroup]").should("be.visible");
     cy.get("[data-cy=PredefinedWorkflowsRadioGroup]")
       .children()
       .eq(subOption)
       .within(() => {
         cy.get("[type=radio]").check();
+        cy.get("[type=radio]").should("be.checked");
       });
   } else if (option == 1) {
     cy.get("[data-cy=templateWorkflowsRadioButton] :radio").check();
+    cy.get("[data-cy=templateWorkflowsRadioButton] :radio").should(
+      "be.checked"
+    );
     cy.get("[data-cy=templateWorkflowsRadioGroup]").should("be.visible");
     cy.get("[data-cy=templateWorkflowsRadioGroup]")
       .children()
       .eq(subOption)
       .within(() => {
         cy.get("[type=radio]").check();
+        cy.get("[type-radio]").should("be.checked");
       });
   } else if (option == 2) {
     cy.get("[data-cy=myHubsRadioButton] :radio").check();
+    cy.get("[data-cy=myHubsRadioButton] :radio").should("be.checked");
     cy.get("[data-cy=myHubDropDown]").click();
     cy.get("[data-cy=hubOption]").eq(subOption).click();
   } else if (option == 3) {
     cy.get("[data-cy=uploadYAMLRadioButton] :radio").check();
+    cy.get("[data-cy=uploadYAMLRadioButton] :radio").should("be.checked");
     cy.get("[data-cy=uploadYAMLInput]").should("be.visible");
     cy.get("[data-cy=uploadYAMLInput] input").attachFile(
       "sample-workflow.yaml"
@@ -83,5 +95,5 @@ Cypress.Commands.add("verifyDetails", (name, description, schedule) => {
   cy.get("[data-cy=WorkflowDescription]").should("have.text", description); // Description Validation
   if (schedule == 0)
     cy.get("[data-cy=schedule]").should("have.text", "Scheduling now"); // Schedule Validation
-  cy.get("[data-cy=AgentName]").should("have.text", "Self-Agent");
+  // cy.get("[data-cy=AgentName]").should("have.text", "Self-Agent");
 });
