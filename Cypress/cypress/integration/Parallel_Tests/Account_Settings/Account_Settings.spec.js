@@ -68,17 +68,16 @@ describe("Testing the My accounts section", () => {
   it("Changing the password by inputting incorrect current password", () => {
     cy.changePassword("abc", user.NewPassword, user.NewPassword);
     cy.get("[data-cy=change-password] button").click();
-    cy.wait("@passwordResponse").its("status").should("eq", 401); //Request Done.
+    cy.wait("@passwordResponse").its("response.statusCode").should("eq", 401); //Request Done.
     cy.contains("Error").should("be.visible");
     cy.modalClose();
     cy.log(
       "User should be able to log in with older credentials as password did not change"
     );
     cy.logout();
-    cy.server();
-    cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
+    cy.intercept("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
     cy.login(user.AdminName, user.AdminPassword);
-    cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
+    cy.wait("@loginResponse").its("response.statusCode").should("eq", 200); //Request Done.
   });
 
   // it("Changing the password by inputting all the three password fields", () => {

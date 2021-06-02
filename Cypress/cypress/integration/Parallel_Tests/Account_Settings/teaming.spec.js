@@ -33,8 +33,9 @@ describe("Testing the Teaming section", () => {
     //Create a new user
     cy.get("[data-cy=user-management]").click();
     cy.get("[data-cy=createUser]").click();
-    cy.server();
-    cy.route("POST", Cypress.env("authURL") + "/create").as("createResponse");
+    cy.intercept("POST", Cypress.env("authURL") + "/create").as(
+      "createResponse"
+    );
     cy.createUser(
       user.NewUserName,
       user.NewUserEmail,
@@ -48,10 +49,9 @@ describe("Testing the Teaming section", () => {
     cy.logout();
     //Login as the new user
     cy.url().should("include", "/login");
-    cy.server();
-    cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
+    cy.intercept("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
     cy.login(user.NewUserUserName, user.NewUserPassword); //CHANGE NAME HERE
-    cy.wait("@loginResponse").its("status").should("eq", 200);
+    cy.wait("@loginResponse").its("response.statusCode").should("eq", 200);
     //Fill welcome modal!
     cy.getStarted(user.NewUserPassword, "Project_01"); //CHANGE MODAL DATA HERE
     cy.contains("Congratulations").should("be.visible");
@@ -61,10 +61,9 @@ describe("Testing the Teaming section", () => {
     //Logout again
     cy.logout();
     //Login now as admin
-    cy.server();
-    cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
+    cy.intercept("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
     cy.login(user.AdminName, user.AdminPassword);
-    cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
+    cy.wait("@loginResponse").its("response.statusCode").should("eq", 200); //Request Done.
     //Assert Login success
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
@@ -105,10 +104,9 @@ describe("Testing the Teaming section", () => {
     );
     cy.logout();
     //Login again as the intivation receipent
-    cy.server();
-    cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
+    cy.intercept("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
     cy.login(user.NewUserUserName, user.NewUserPassword);
-    cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
+    cy.wait("@loginResponse").its("response.statusCode").should("eq", 200); //Request Done.
     //Assert success
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
@@ -123,10 +121,9 @@ describe("Testing the Teaming section", () => {
     //Logout
     cy.logout();
     //Login again as Admin to confirm that member has been added.
-    cy.server();
-    cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
+    cy.intercept("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
     cy.login(user.AdminName, user.AdminPassword);
-    cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
+    cy.wait("@loginResponse").its("response.statusCode").should("eq", 200); //Request Done.
     //Assert Login success
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");

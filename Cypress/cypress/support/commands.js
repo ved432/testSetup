@@ -9,12 +9,11 @@ import "cypress-file-upload";
 Cypress.Commands.add("waitForCluster", (agentName) => {
   cy.visit("/targets");
   // Checking if required Agent is there.
-  cy.get("table").contains("td", agentName).should("be.visible");
+  // cy.get("table").contains("td", agentName).should("be.visible");
   // Wait for Agent to be active
   cy.waitUntil(
     () =>
       cy
-        .get("table")
         .contains("td", agentName)
         .parent()
         .children()
@@ -32,7 +31,7 @@ Cypress.Commands.add("waitForCluster", (agentName) => {
 
 // GraphQL Waiting
 Cypress.Commands.add("GraphqlWait", (operationName, alias) => {
-  cy.intercept("POST", "/query", (req) => {
+  cy.intercept("POST", Cypress.env("apiURL") + "/query", (req) => {
     if (req.body.operationName.includes(operationName)) {
       req.alias = alias;
     }

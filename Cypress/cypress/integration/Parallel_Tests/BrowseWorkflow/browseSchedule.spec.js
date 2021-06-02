@@ -18,8 +18,7 @@ describe("Testing the Browse Schedule Tab", () => {
     cy.get("[data-cy=workflows]").click();
     cy.url().should("contain", "/workflows");
     cy.get("[data-cy=browseSchedule] > .MuiTab-wrapper");
-    cy.server();
-    cy.route({
+    cy.intercept({
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
     }).as("scheduleData"); //Alias for the WorkflowSchedule Query
@@ -46,8 +45,7 @@ describe("Testing the Browse Schedule Tab", () => {
     cy.get("[data-cy=workflows]").click();
     cy.url().should("contain", "workflows");
     cy.get("[data-cy=browseSchedule] > .MuiTab-wrapper");
-    cy.server();
-    cy.route({
+    cy.intercept({
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
     }).as("scheduleData"); //Alias for the WorkflowSchedule Query
@@ -69,7 +67,7 @@ describe("Testing the Browse Schedule Tab", () => {
     cy.get("[data-cy=workflows]").click();
     cy.url().should("contain", "workflows");
     cy.get("[data-cy=browseSchedule] > .MuiTab-wrapper");
-    cy.route({
+    cy.intercept({
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
     }).as("scheduleData");
