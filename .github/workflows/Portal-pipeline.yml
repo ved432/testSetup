@@ -70,11 +70,11 @@ jobs:
           working-directory: Cypress/
           config-file: cypress.prod.json
 
-      - name: Running Teaming Tests
+      - name: Running Parallel tests
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
-          spec: cypress/integration/Parallel_Tests//*.spec.js
+          spec: cypress/integration/Parallel_Tests/**/*.spec.js
           working-directory: Cypress/
           config-file: cypress.prod.json
 
