@@ -16,7 +16,7 @@ describe("Testing the User management section", () => {
     cy.intercept("GET", Cypress.env("authURL") + "/users").as("userResponse");
     cy.get("[data-cy=user-management]").click();
     cy.wait("@userResponse").then((data) => {
-      cy.wrap(data.responseBody.length).should("gte", 1);
+      cy.wrap(data.response.body.length).should("gte", 1);
     });
   });
   it("Checking the accessibility of Create new user", () => {
@@ -60,7 +60,7 @@ describe("Testing the User management section", () => {
   });
   it("Creating user by inputting all details", () => {
     cy.get("[data-cy=searchField]").within(() => {
-      cy.get("input").clear().type("Richard Hill");
+      cy.get("input").clear().type("richard124");
     });
     cy.get("[data-cy=userTableRow]").within(() => {
       cy.get("[data-cy=editUser]").first().click();

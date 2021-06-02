@@ -54,7 +54,6 @@ describe("Testing the Teaming section", () => {
     cy.wait("@loginResponse").its("response.statusCode").should("eq", 200);
     //Fill welcome modal!
     cy.getStarted(user.NewUserPassword, "Project_01"); //CHANGE MODAL DATA HERE
-    cy.contains("Congratulations").should("be.visible");
     //Assert Login success
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
