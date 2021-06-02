@@ -70,6 +70,14 @@ jobs:
           working-directory: Cypress/
           config-file: cypress.prod.json
 
+      - name: Running Teaming Tests
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Parallel_Tests//*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+
       - name: Registering External Agent in Cluster Mode
         if: always()
         run: |
@@ -83,6 +91,7 @@ jobs:
       # TODO: Additional Tests will be added from here
 
       - name: Portal Cleanup
+        if: always()
         run: |
           chmod 755 ./litmus/uninstall-portal.sh
           ./litmus/uninstall-portal.sh
