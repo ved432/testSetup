@@ -58,8 +58,6 @@ if [[ "$loadBalancer" == "true" ]];then
 
     echo "URL to access Litmus-Portal: $URL"
 
-    echo "::set-output name=URL::$URL"  ## Will be shifted to steps
-
 else
     kubectl port-forward svc/litmusportal-frontend-service 3001:9091 -n litmus &
 fi

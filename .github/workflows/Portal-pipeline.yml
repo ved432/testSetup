@@ -5,16 +5,12 @@ on:
       Tag:
         default: "ci"
 
-      Type:
-        default: "Manifest"
-
       Module:
         default: "All"
 
 # All Environments variables declared and set here.
 env:
   TAG: "${{github.event.inputs.Tag}}"
-  TYPE: "${{github.event.inputs.Type}}"
   MODULE: "${{github.event.inputs.Module}}"
   SELF_AGENT: "self-agent"
   EXTERNAL_AGENT: "external-agent"
@@ -39,7 +35,6 @@ jobs:
           kubectl get pods -n kube-system
 
       - name: Deploying Litmus-Portal using **k8s-manifest**
-        if: ${{ env.TYPE == 'Manifest' }}
         run: |
           chmod 755 ./litmus/install-portal.sh
           ./litmus/install-portal.sh
@@ -86,6 +81,13 @@ jobs:
           litmus/litmusctl-register.sh "http://localhost:3001" 1
 
       # TODO: Additional Tests will be added from here
+
+      - name: Portal Cleanup
+        run: |
+          chmod 755 ./litmus/uninstall-portal.sh
+          ./litmus/uninstall-portal.sh
+        env:
+          PORTAL_VERSION: ${{ env.Tag }}
 
       - name: Deleting All kind clusters
         if: always()
