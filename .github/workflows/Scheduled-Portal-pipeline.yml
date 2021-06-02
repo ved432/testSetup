@@ -37,25 +37,25 @@ jobs:
           PORTAL_VERSION: ${{ env.Tag }}
           LOAD_BALANCER: "false"
 
-      - name: Setting up Agent Cluster
-        uses: engineerd/setup-kind@v0.5.0
-        with:
-          version: "v0.9.0"
-          name: "${{ env.EXTERNAL_AGENT }}"
+      # - name: Setting up Agent Cluster
+      #   uses: engineerd/setup-kind@v0.5.0
+      #   with:
+      #     version: "v0.9.0"
+      #     name: "${{ env.EXTERNAL_AGENT }}"
 
-      - name: Configuring and Testing the Agent Installation
-        run: |
-          kubectl cluster-info --context kind-${{ env.EXTERNAL_AGENT }}
-          kubectl get nodes
-          kubectl get pods -n kube-system
+      # - name: Configuring and Testing the Agent Installation
+      #   run: |
+      #     kubectl cluster-info --context kind-${{ env.EXTERNAL_AGENT }}
+      #     kubectl get nodes
+      #     kubectl get pods -n kube-system
 
-      - name: Installing LitmusCTL on Agent Cluster
-        run: |
-          curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
-          tar -zxvf litmusctl-linux-amd64-master.tar.gz
-          chmod +x litmusctl
-          sudo mv litmusctl /usr/local/bin/litmusctl
-          litmusctl version
+      # - name: Installing LitmusCTL on Agent Cluster
+      #   run: |
+      #     curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+      #     tar -zxvf litmusctl-linux-amd64-master.tar.gz
+      #     chmod +x litmusctl
+      #     sudo mv litmusctl /usr/local/bin/litmusctl
+      #     litmusctl version
 
       - name: Running basic tests (Login and Onboarding Tests)
         uses: cypress-io/github-action@v2
@@ -65,24 +65,40 @@ jobs:
           working-directory: Cypress/
           config-file: cypress.prod.json
 
-      - name: Registering External Agent in Cluster Mode
+      - name: Running Parallel tests
+        uses: cypress-io/github-action@v2
         if: always()
-        run: |
-          kubectl config use-context kind-${{ env.SELF_AGENT }}
-          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
-          kubectl config use-context kind-${{ env.EXTERNAL_AGENT }}
-          sudo apt-get install expect
-          chmod 755 litmus/litmusctl-register.sh
-          litmus/litmusctl-register.sh "http://localhost:3001" 1
+        continue-on-error: true
+        with:
+          spec: cypress/integration/Parallel_Tests/**/*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+
+      # - name: Registering External Agent in Cluster Mode
+      #   if: always()
+      #   run: |
+      #     kubectl config use-context kind-${{ env.SELF_AGENT }}
+      #     kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
+      #     kubectl config use-context kind-${{ env.EXTERNAL_AGENT }}
+      #     sudo apt-get install expect
+      #     chmod 755 litmus/litmusctl-register.sh
+      #     litmus/litmusctl-register.sh "http://localhost:3001" 1
 
       # TODO: Additional Tests will be added from here
 
       - name: Portal Cleanup
+        if: always()
         run: |
           chmod 755 ./litmus/uninstall-portal.sh
           ./litmus/uninstall-portal.sh
         env:
           PORTAL_VERSION: ${{ env.Tag }}
+
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: Cypress/cypress/screenshots
 
       - name: Deleting All kind clusters
         if: always()

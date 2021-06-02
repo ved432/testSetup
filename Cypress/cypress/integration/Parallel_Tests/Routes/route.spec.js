@@ -24,11 +24,16 @@ describe("Testing the routes with login [Must redirect to known required page or
   });
 
   context("Testing routes functionality with login", () => {
-    ["workflow", "homepage", "community", "Unknown"].map((page) => {
+    ["workflow", "homepage", "community"].map((page) => {
       it("Visiting the " + page + " page after login", () => {
         cy.visit("/" + page);
         cy.url().should("include", "/" + page);
       });
+    });
+
+    it("Testing unknown route", () => {
+      cy.visit("/unknown");
+      cy.url().should("include", "404");
     });
   });
 });
