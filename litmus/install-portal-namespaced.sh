@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source utils.sh
+source litmus/utils.sh
 
 path=$(pwd)
 default_portal_port=9091
