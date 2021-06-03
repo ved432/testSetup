@@ -98,11 +98,11 @@ function manifest_image_update(){
     version="$1"
     manifest_name="$2"
     echo "$2"
-    sed -i -e "s|litmuschaos/litmusportal-frontend:.*|litmuschaos/litmusportal-frontend:$version|g" $manifest_name
-    sed -i -e "s|litmuschaos/litmusportal-server:.*|litmuschaos/litmusportal-server:$version|g" $manifest_name
-    sed -i -e "s|litmuschaos/litmusportal-auth-server:.*|litmuschaos/litmusportal-auth-server:$version|g" $manifest_name
-    sed -i -e "s|litmuschaos/litmusportal-subscriber:.*|litmuschaos/litmusportal-subscriber:$version|g" $manifest_name
-    sed -i -e "s|litmuschaos/litmusportal-event-tracker:.*|litmuschaos/litmusportal-event-tracker:$version|g" $manifest_name
+    sed -i -e "s|litmuschaos/litmusportal-frontend:ci|litmuschaos/litmusportal-frontend:$version|g" $manifest_name
+    sed -i -e "s|litmuschaos/litmusportal-server:ci|litmuschaos/litmusportal-server:$version|g" $manifest_name
+    sed -i -e "s|litmuschaos/litmusportal-auth-server:ci|litmuschaos/litmusportal-auth-server:$version|g" $manifest_name
+    sed -i -e "s|litmuschaos/litmusportal-subscriber:ci|litmuschaos/litmusportal-subscriber:$version|g" $manifest_name
+    sed -i -e "s|litmuschaos/litmusportal-event-tracker:ci|litmuschaos/litmusportal-event-tracker:$version|g" $manifest_name
 }
 
 ## Function to verify image for a deployment in given namespace
