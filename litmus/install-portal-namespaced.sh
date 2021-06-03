@@ -16,7 +16,7 @@ envsubst < litmus-portal-namespaced-k8s-setup.yml > ${LITMUS_PORTAL_NAMESPACE}-n
 
 manifest_image_update $version "${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-setup.yml"
 
-kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-setup.yml -n ${LITMUS_PORTAL_NAMESPACE}
+kubectl apply -f "${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-setup.yml" -n ${LITMUS_PORTAL_NAMESPACE}
 
 
 ## TODO: To be Removed
