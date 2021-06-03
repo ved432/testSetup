@@ -12,11 +12,11 @@ LITMUS_PORTAL_NAMESPACE=${PORTAL_NAMESPACE}
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 curl https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/2.0.0-Beta/litmus-namespaced-2.0.0-Beta.yaml --output litmus-portal-namespaced-k8s-setup.yml
-envsubst < litmus-portal-namespaced-k8s-setup.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+envsubst < litmus-portal-namespaced-k8s-setup.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-setup.yml
 
-manifest_image_update $version ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+manifest_image_update $version ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-setup.yml
 
-kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
+kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-setup.yml -n ${LITMUS_PORTAL_NAMESPACE}
 
 
 ## TODO: To be Removed
