@@ -136,6 +136,7 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
           PORTAL_NAMESPACE: "scope"
+          LITMUS_PORTAL_NAMESPACE: "scope"
 
       - name: Setting up Agent Cluster
         uses: engineerd/setup-kind@v0.5.0
