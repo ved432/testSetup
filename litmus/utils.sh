@@ -95,8 +95,9 @@ function verify_namespace(){
 
 ## Function to update images in portal manifests, Currently specific to Portal Only
 function manifest_image_update(){
-    version=$1
-    manifest_name=$2
+    version="$1"
+    manifest_name="$2"
+    echo "$2"
     sed -i -e "s|litmuschaos/litmusportal-frontend:.*|litmuschaos/litmusportal-frontend:$version|g" $manifest_name
     sed -i -e "s|litmuschaos/litmusportal-server:.*|litmuschaos/litmusportal-server:$version|g" $manifest_name
     sed -i -e "s|litmuschaos/litmusportal-auth-server:.*|litmuschaos/litmusportal-auth-server:$version|g" $manifest_name

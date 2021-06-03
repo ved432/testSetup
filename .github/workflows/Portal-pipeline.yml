@@ -135,7 +135,7 @@ jobs:
         env:
           PORTAL_VERSION: ${{ env.Tag }}
           LOAD_BALANCER: "false"
-          PORTAL_NAMESPACE: "ns-scope"
+          PORTAL_NAMESPACE: "scope"
 
       # - name: Setting up Agent Cluster
       #   uses: engineerd/setup-kind@v0.5.0
@@ -193,7 +193,7 @@ jobs:
           ./litmus/uninstall-portal-namespaced.sh
         env:
           PORTAL_VERSION: ${{ env.Tag }}
-          PORTAL_NAMESPACE: "ns-scope"
+          PORTAL_NAMESPACE: "scope"
 
       - uses: actions/upload-artifact@v1
         if: failure()
