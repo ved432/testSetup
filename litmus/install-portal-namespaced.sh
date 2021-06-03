@@ -18,7 +18,7 @@ envsubst < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE
 manifest_image_update $version ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 
 # Applying the manifest
-kubectl apply -f "${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-setup.yml" -n ${LITMUS_PORTAL_NAMESPACE}
+kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 
 # TODO: To be Removed
 kubectl get pods -n ${LITMUS_PORTAL_NAMESPACE}
