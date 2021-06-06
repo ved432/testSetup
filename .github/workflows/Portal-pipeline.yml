@@ -173,7 +173,7 @@ jobs:
         with:
           spec: cypress/integration/Parallel_Tests/**/*.spec.js
           working-directory: Cypress/
-          config-file: cypress.prod.json
+          config-file: cypress.ns-scope.json
 
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
