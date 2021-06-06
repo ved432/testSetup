@@ -164,7 +164,7 @@ jobs:
         with:
           spec: cypress/integration/Basic_Setup/**/*.spec.js
           working-directory: Cypress/
-          config-file: cypress.prod.json
+          config-file: cypress.ns-scope.json
 
       - name: Running Parallel tests
         uses: cypress-io/github-action@v2
