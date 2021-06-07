@@ -70,6 +70,8 @@ jobs:
           working-directory: Cypress/
           config-file: cypress.prod.json
           config: baseUrl=$URL
+        env:
+          CYPRESS_BASE_URL: ${URL}
 
       - name: Verifying the Control-plane components
         run: |
@@ -88,6 +90,8 @@ jobs:
           working-directory: Cypress/
           config-file: cypress.prod.json
           config: baseUrl=${URL}
+        env:
+          CYPRESS_BASE_URL: ${URL}
 
       - name: Registering External Agent in Cluster Mode
         if: always()
