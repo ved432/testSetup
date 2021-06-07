@@ -51,7 +51,7 @@ if [[ "$loadBalancer" == "true" ]];then
 
     wait_for_loadbalancer litmusportal-frontend-service ${LITMUS_PORTAL_NAMESPACE}
 
-    IP=$(kubectl get svc litmusportal-frontend-service -n ${LITMUS_PORTAL_NAMESPACE} --template="{{range .status.loadBalancer.ingress}}{{.hostname}}{{end}}"); 
+    IP=$(kubectl get svc litmusportal-frontend-service -n ${LITMUS_PORTAL_NAMESPACE} --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}"); 
 
     URL=http://$IP:$default_portal_port
 

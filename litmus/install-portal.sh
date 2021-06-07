@@ -44,12 +44,12 @@ verify_deployment_image $version litmusportal-frontend litmus
 verify_deployment_image $version litmusportal-server litmus
 
 if [[ "$loadBalancer" == "true" ]];then
-    # Getting The LoadBalancer IP for accessing Litmus-Portal
+    # # Getting The LoadBalancer IP for accessing Litmus-Portal
     kubectl patch svc litmusportal-frontend-service -p '{"spec": {"type": "LoadBalancer"}}' -n litmus
 
     wait_for_loadbalancer litmusportal-frontend-service litmus
 
-    IP=$(kubectl get svc litmusportal-frontend-service -n litmus --template="{{range .status.loadBalancer.ingress}}{{.hostname}}{{end}}");
+    IP=$(kubectl get svc litmusportal-frontend-service -n litmus --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}");
 
     URL=http://$IP:$default_portal_port
 
