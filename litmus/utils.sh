@@ -52,7 +52,8 @@ function show_resources(){
 function wait_for_pods(){
     namespace=$1
     timeout="$2s" # Added "s" for seconds
-    kubectl wait --for=condition=Ready pods --all --namespace ${namespace} --timeout=360s
+    kubectl wait --for=condition=Ready pods --all --namespace ${namespace} --timeout=720s
+    kubectl get pods -n ${namespace}
 }
 
 ## Function for verifying deployment
