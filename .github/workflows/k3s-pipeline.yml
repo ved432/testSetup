@@ -87,7 +87,7 @@ jobs:
           spec: cypress/integration/Parallel_Tests/**/*.spec.js
           working-directory: Cypress/
           config-file: cypress.prod.json
-          config: baseUrl=$URL
+          config: baseUrl=${URL}
 
       - name: Registering External Agent in Cluster Mode
         if: always()
