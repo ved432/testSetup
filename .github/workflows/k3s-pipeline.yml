@@ -69,7 +69,6 @@ jobs:
           spec: cypress/integration/Basic_Setup/**/*.spec.js
           working-directory: Cypress/
           config-file: cypress.prod.json
-          config: baseUrl=$URL
         env:
           CYPRESS_BASE_URL: ${URL}
 
@@ -89,7 +88,6 @@ jobs:
           spec: cypress/integration/Parallel_Tests/**/*.spec.js
           working-directory: Cypress/
           config-file: cypress.prod.json
-          config: baseUrl=${URL}
         env:
           CYPRESS_BASE_URL: ${URL}
 
