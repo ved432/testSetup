@@ -41,7 +41,7 @@ jobs:
           echo "URL=$(eval "kubectl get svc litmusportal-frontend-service -n litmus --template='{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}'" | awk '{print $1}')" >> $GITHUB_ENV
         env:
           PORTAL_VERSION: "ci"
-          LOAD_BALANCER: "true"
+          LOAD_BALANCER: "false"
 
       - uses: AbsaOSS/k3d-action@v1.4.0
         name: "Create 2nd Cluster"
