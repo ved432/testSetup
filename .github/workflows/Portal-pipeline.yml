@@ -73,7 +73,10 @@ jobs:
       - name: Verifying the Control-plane components
         run: |
           kubectl config use-context kind-${{ env.SELF_AGENT }}
-          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=360s
+          chmod 755 ./litmus/control-plane-components-check.sh
+          ./litmus/control-plane-components-check.sh
+        env:
+          LITMUS_PORTAL_NAMESPACE: "litmus"
 
       - name: Running Parallel tests
         uses: cypress-io/github-action@v2
@@ -172,7 +175,10 @@ jobs:
       - name: Verifying the Control-plane components
         run: |
           kubectl config use-context kind-${{ env.SELF_AGENT }}
-          kubectl wait --for=condition=Ready pods --all --namespace scope --timeout=360s
+          chmod 755 ./litmus/control-plane-components-check.sh
+          ./litmus/control-plane-components-check.sh
+        env:
+          LITMUS_PORTAL_NAMESPACE: "scope"
 
       - name: Running Parallel tests
         uses: cypress-io/github-action@v2
