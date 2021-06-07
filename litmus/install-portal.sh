@@ -2,7 +2,7 @@
 
 source litmus/utils.sh
 
-path=$(pwd)
+# path=$(pwd)
 default_portal_port=9091
 version=${PORTAL_VERSION}
 loadBalancer=${LOAD_BALANCER}

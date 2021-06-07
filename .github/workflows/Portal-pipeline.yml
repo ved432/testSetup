@@ -100,7 +100,7 @@ jobs:
           chmod 755 ./litmus/uninstall-portal.sh
           ./litmus/uninstall-portal.sh
         env:
-          PORTAL_VERSION: ${{ env.Tag }}
+          PORTAL_VERSION: "ci"
 
       - uses: actions/upload-artifact@v1
         if: failure()
