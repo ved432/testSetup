@@ -38,7 +38,7 @@ jobs:
         run: |
           chmod 755 ./litmus/install-portal.sh
           ./litmus/install-portal.sh
-          echo "URL=$(kubectl get svc litmusportal-frontend-service -n litmus --template="{{range .status.loadBalancer.ingress}}{{.hostname}}{{end}}")" >> $GITHUB_ENV
+          echo "URL=$(eval "kubectl get svc litmusportal-frontend-service -n litmus --template='{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}'" | awk '{print $1}')" >> $GITHUB_ENV
         env:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "true"
