@@ -100,6 +100,7 @@ jobs:
       - name: Portal Cleanup
         if: always()
         run: |
+          kubectl config use-context kind-${{ env.SELF_AGENT }}
           chmod 755 ./litmus/uninstall-portal.sh
           ./litmus/uninstall-portal.sh
         env:
@@ -202,6 +203,7 @@ jobs:
       - name: Portal Cleanup
         if: always()
         run: |
+          kubectl config use-context kind-${{ env.SELF_AGENT }}
           chmod 755 ./litmus/uninstall-portal-namespaced.sh
           ./litmus/uninstall-portal-namespaced.sh
         env:
