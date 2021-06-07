@@ -99,7 +99,7 @@ jobs:
           kubectl config use-context k3d-${{ env.EXTERNAL_AGENT }}
           sudo apt-get install expect
           chmod 755 litmus/litmusctl-register.sh
-          litmus/litmusctl-register.sh "http://localhost:3001" 1
+          litmus/litmusctl-register.sh "$URL" 1
 
       # TODO: Additional Tests will be added from here
 
