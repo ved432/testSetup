@@ -35,7 +35,8 @@ function wait_for_loadbalancer(){
         exit 1
         else
         echo "Waiting for end point..."; 
-        IP=$(kubectl get svc $SVC -n $Namespace --template="{{range .status.loadBalancer.ingress}}{{.hostname}}{{end}}"); 
+        IP=$(kubectl get svc $SVC -n $Namespace --template="{{range .status.loadBalancer.ingress}}{{.hostname}}{{end}}");
+        echo "IP"
         [ -z "$IP" ] && sleep 10; 
         fi
     done; 
