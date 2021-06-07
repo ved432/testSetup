@@ -70,6 +70,11 @@ jobs:
           working-directory: Cypress/
           config-file: cypress.prod.json
 
+      - name: Verifying the Control-plane components
+        run: |
+          kubectl config use-context kind-${{ env.SELF_AGENT }}
+          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=360s
+
       - name: Running Parallel tests
         uses: cypress-io/github-action@v2
         if: always()
@@ -82,8 +87,6 @@ jobs:
       - name: Registering External Agent in Cluster Mode
         if: always()
         run: |
-          kubectl config use-context kind-${{ env.SELF_AGENT }}
-          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
           kubectl config use-context kind-${{ env.EXTERNAL_AGENT }}
           sudo apt-get install expect
           chmod 755 litmus/litmusctl-register.sh
@@ -166,6 +169,11 @@ jobs:
           working-directory: Cypress/
           config-file: cypress.ns-scope.json
 
+      - name: Verifying the Control-plane components
+        run: |
+          kubectl config use-context kind-${{ env.SELF_AGENT }}
+          kubectl wait --for=condition=Ready pods --all --namespace scope --timeout=360s
+
       - name: Running Parallel tests
         uses: cypress-io/github-action@v2
         if: always()
@@ -178,8 +186,6 @@ jobs:
       - name: Registering External Agent in Cluster Mode
         if: always()
         run: |
-          kubectl config use-context kind-${{ env.SELF_AGENT }}
-          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
           kubectl config use-context kind-${{ env.EXTERNAL_AGENT }}
           sudo apt-get install expect
           chmod 755 litmus/litmusctl-register.sh
