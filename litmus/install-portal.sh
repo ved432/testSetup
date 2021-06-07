@@ -66,4 +66,5 @@ else
     export NODE_PORT=$(kubectl -n litmus get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
     export Access_url="http://$INTERNAL_IP:$NODE_PORT"
     echo "$Access_url"
+    echo "URL=$Access_url" >> $GITHUB_ENV
 fi

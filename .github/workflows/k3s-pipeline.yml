@@ -38,7 +38,6 @@ jobs:
         run: |
           chmod 755 ./litmus/install-portal.sh
           ./litmus/install-portal.sh
-          echo "URL=$Access_url" >> $GITHUB_ENV
         env:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
