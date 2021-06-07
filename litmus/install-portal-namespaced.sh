@@ -61,5 +61,10 @@ if [[ "$loadBalancer" == "true" ]];then
     echo "URL to access Litmus-Portal: $URL"
 
 else
-    kubectl port-forward svc/litmusportal-frontend-service 3001:9091 -n ${LITMUS_PORTAL_NAMESPACE} &
+    # kubectl port-forward svc/litmusportal-frontend-service 3001:9091 -n ${LITMUS_PORTAL_NAMESPACE} &
+    export NODE_NAME=$(kubectl -n ${LITMUS_PORTAL_NAMESPACE} get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
+    export NODE_IP=$(kubectl -n ${LITMUS_PORTAL_NAMESPACE} get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+    export NODE_PORT=$(kubectl -n ${LITMUS_PORTAL_NAMESPACE} get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
+    export AccessURL="http://$NODE_IP:$NODE_PORT"
+    echo "URL=$AccessURL" >> $GITHUB_ENV
 fi
