@@ -223,7 +223,7 @@ jobs:
 
   Pipeline_Update:
     if: always()
-    needs: [Cluster-Scope-Mode, Namespaced-Scope-Mode]
+    # needs: [Cluster-Scope-Mode, Namespaced-Scope-Mode]
     defaults:
       run:
         working-directory: /go/src
