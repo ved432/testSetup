@@ -46,7 +46,7 @@ def get_file_to_update(pipeline,tag):
                      return "generic-pipeline/pipeline-runs/node-level-run.html"
               elif pipeline == "component":
                      return "generic-pipeline/pipeline-runs/litmus-component-run.html"
-              elif pipeline == "portal-e2e"
+              elif pipeline == "portal-e2e":
                      return "portal-pipeline/pipeline-runs/portal-run.html"
               else:
                      raise Exception('Sorry, no pipeline found with name '+pipeline)
@@ -57,7 +57,7 @@ def get_file_to_update(pipeline,tag):
                      return "generic-pipeline/pipeline-runs/node-level-rc.html"
               elif pipeline == "component":
                      return "generic-pipeline/pipeline-runs/litmus-component-rc.html"
-              elif pipeline == "portal-e2e"
+              elif pipeline == "portal-e2e":
                      return "portal-pipeline/pipeline-runs/portal-rc.html"
               else:
                      raise Exception('Sorry, no pipeline found with name '+pipeline)
@@ -68,17 +68,17 @@ def get_file_to_update(pipeline,tag):
                      return "generic-pipeline/pipeline-runs/node-level-ga.html"
               elif pipeline == "component":
                      return "generic-pipeline/pipeline-runs/litmus-component-ga.html"
-              elif pipeline == "portal-e2e"
+              elif pipeline == "portal-e2e":
                      return "portal-pipeline/pipeline-runs/portal-ga.html"
               else:
                      raise Exception('Sorry, no pipeline found with name '+pipeline)
 
-repo = github_token.get_repo("litmuschaos/litmus-e2e")
-b= repo.get_branch(branch="gh-pages")
+repo = github_token.get_repo("Jonsy13/Pipeline-Updates-Test)
+b= repo.get_branch(branch="master")
 filename = get_file_to_update(pipeline,tag)
 print("filename to be updated: "+filename)
-contents = repo.get_contents(filename, "gh-pages")
-file = repo.get_contents(contents.path, "gh-pages")
+contents = repo.get_contents(filename, "master")
+file = repo.get_contents(contents.path, "master")
 file_path = contents.path
 file_content=str(file.decoded_content)
 content_list = file_content.split('\n')
@@ -91,7 +91,7 @@ pipeline_url ="<a href= \"https://github.com/litmuschaos/litmus-e2e/actions/runs
 def fetch_file_content():
     # fetching file contents of github file_path
     count=0
-    file = repo.get_contents(file_path, "gh-pages")
+    file = repo.get_contents(file_path, "master")
     file_content=str(file.decoded_content, 'utf-8')
     content_list = file_content.split('\n')
     totalCoverage= '<a href=\"https://bit.ly/2OLie8t\"><img alt='+coverage+'% src=\"https://progress-bar.dev/'+coverage+'\" /></a>'
@@ -144,7 +144,7 @@ print("Trying to update respective html files at path: {}".format(file_path))
 try:
     print("Pipeline table content update try: {}".format(try_count))
     try_count += 1
-    repo.update_file(file_path, commit_message, updated_file_content, file.sha, branch="gh-pages")
+    repo.update_file(file_path, commit_message, updated_file_content, file.sha, branch="master")
     print("Pipeline table updated successfully")
 except github.GithubException as e:
     exception = e
@@ -166,7 +166,7 @@ except github.GithubException as e:
        try_count += 1
 
        # retry committing Pipeline table file 
-       repo.update_file(file_path, commit_message, updated_file_content, file.sha, branch="gh-pages")
+       repo.update_file(file_path, commit_message, updated_file_content, file.sha, branch="master")
        print("Pipeline table updated successfully")
 
        # exit the loop as file updated successfully

@@ -1,4 +1,4 @@
-name: Portal-E2E Pipeline
+name: Portal-E2E K3S Pipeline
 on:
   workflow_dispatch:
     inputs:
@@ -22,15 +22,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setting up Main Cluster
-        uses: engineerd/setup-kind@v0.5.0
+      - uses: AbsaOSS/k3d-action@v1.4.0
+        name: "Create 1st Cluster"
         with:
-          version: "v0.9.0"
-          name: ${{ env.SELF_AGENT }}
+          cluster-name: ${{ env.SELF_AGENT }}
+          args: --agents 1
 
       - name: Configuring and Testing the Cluster Installation
         run: |
-          kubectl cluster-info --context kind-${{ env.SELF_AGENT }}
+          kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
           kubectl get nodes
           kubectl get pods -n kube-system
 
@@ -42,15 +42,15 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
 
-      - name: Setting up Agent Cluster
-        uses: engineerd/setup-kind@v0.5.0
+      - uses: AbsaOSS/k3d-action@v1.4.0
+        name: "Create 2nd Cluster"
         with:
-          version: "v0.9.0"
-          name: "${{ env.EXTERNAL_AGENT }}"
+          cluster-name: ${{ env.EXTERNAL_AGENT }}
+          args: --agents 1
 
       - name: Configuring and Testing the Agent Installation
         run: |
-          kubectl cluster-info --context kind-${{ env.EXTERNAL_AGENT }}
+          kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
           kubectl get nodes
           kubectl get pods -n kube-system
 
@@ -69,10 +69,13 @@ jobs:
           spec: cypress/integration/Basic_Setup/**/*.spec.js
           working-directory: Cypress/
           config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
 
       - name: Verifying the Control-plane components
         run: |
-          kubectl config use-context kind-${{ env.SELF_AGENT }}
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
           chmod 755 ./litmus/control-plane-components-check.sh
           ./litmus/control-plane-components-check.sh
         env:
@@ -86,21 +89,24 @@ jobs:
           spec: cypress/integration/Parallel_Tests/**/*.spec.js
           working-directory: Cypress/
           config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
 
-      - name: Registering External Agent in Cluster Mode
-        if: always()
-        run: |
-          kubectl config use-context kind-${{ env.EXTERNAL_AGENT }}
-          sudo apt-get install expect
-          chmod 755 litmus/litmusctl-register.sh
-          litmus/litmusctl-register.sh "http://localhost:3001" 1
+      # - name: Registering External Agent in Cluster Mode
+      #   if: always()
+      #   run: |
+      #     kubectl config use-context k3d-${{ env.EXTERNAL_AGENT }}
+      #     sudo apt-get install expect
+      #     chmod 755 litmus/litmusctl-register.sh
+      #     litmus/litmusctl-register.sh "$URL" 1
 
       # TODO: Additional Tests will be added from here
 
       - name: Portal Cleanup
         if: always()
         run: |
-          kubectl config use-context kind-${{ env.SELF_AGENT }}
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
           chmod 755 ./litmus/uninstall-portal.sh
           ./litmus/uninstall-portal.sh
         env:
@@ -112,26 +118,20 @@ jobs:
           name: cypress-screenshots
           path: Cypress/cypress/screenshots
 
-      - name: Deleting All kind clusters
-        if: always()
-        run: |
-          kind delete cluster --name=${{ env.SELF_AGENT }}
-          kind delete cluster --name=${{ env.EXTERNAL_AGENT }}
-
   Namespaced-Scope-Mode:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setting up Main Cluster
-        uses: engineerd/setup-kind@v0.5.0
+      - uses: AbsaOSS/k3d-action@v1.4.0
+        name: "Create 1st Cluster"
         with:
-          version: "v0.9.0"
-          name: ${{ env.SELF_AGENT }}
+          cluster-name: ${{ env.SELF_AGENT }}
+          args: --agents 3
 
       - name: Configuring and Testing the Cluster Installation
         run: |
-          kubectl cluster-info --context kind-${{ env.SELF_AGENT }}
+          kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
           kubectl get nodes
           kubectl get pods -n kube-system
 
@@ -143,17 +143,16 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
           PORTAL_NAMESPACE: "scope"
-          LITMUS_PORTAL_NAMESPACE: "scope"
 
-      - name: Setting up Agent Cluster
-        uses: engineerd/setup-kind@v0.5.0
+      - uses: AbsaOSS/k3d-action@v1.4.0
+        name: "Create 2nd Cluster"
         with:
-          version: "v0.9.0"
-          name: "${{ env.EXTERNAL_AGENT }}"
+          cluster-name: ${{ env.EXTERNAL_AGENT }}
+          args: --agents 3
 
       - name: Configuring and Testing the Agent Installation
         run: |
-          kubectl cluster-info --context kind-${{ env.EXTERNAL_AGENT }}
+          kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
           kubectl get nodes
           kubectl get pods -n kube-system
 
@@ -171,11 +170,14 @@ jobs:
         with:
           spec: cypress/integration/Basic_Setup/**/*.spec.js
           working-directory: Cypress/
-          config-file: cypress.ns-scope.json
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
 
       - name: Verifying the Control-plane components
         run: |
-          kubectl config use-context kind-${{ env.SELF_AGENT }}
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
           chmod 755 ./litmus/control-plane-components-check.sh
           ./litmus/control-plane-components-check.sh
         env:
@@ -188,22 +190,25 @@ jobs:
         with:
           spec: cypress/integration/Parallel_Tests/**/*.spec.js
           working-directory: Cypress/
-          config-file: cypress.ns-scope.json
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
 
-      - name: Registering External Agent in Cluster Mode
-        if: always()
-        run: |
-          kubectl config use-context kind-${{ env.EXTERNAL_AGENT }}
-          sudo apt-get install expect
-          chmod 755 litmus/litmusctl-register.sh
-          litmus/litmusctl-register.sh "http://localhost:3001" 1
+      # - name: Registering External Agent in Cluster Mode
+      #   if: always()
+      #   run: |
+      #     kubectl config use-context k3d-${{ env.EXTERNAL_AGENT }}
+      #     sudo apt-get install expect
+      #     chmod 755 litmus/litmusctl-register.sh
+      #     litmus/litmusctl-register.sh "http://localhost:3001" 1
 
       # TODO: Additional Tests will be added from here
 
       - name: Portal Cleanup
         if: always()
         run: |
-          kubectl config use-context kind-${{ env.SELF_AGENT }}
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
           chmod 755 ./litmus/uninstall-portal-namespaced.sh
           ./litmus/uninstall-portal-namespaced.sh
         env:
@@ -216,8 +221,21 @@ jobs:
           name: cypress-screenshots
           path: Cypress/cypress/screenshots
 
-      - name: Deleting All kind clusters
-        if: always()
-        run: |
-          kind delete cluster --name=${{ env.SELF_AGENT }}
-          kind delete cluster --name=${{ env.EXTERNAL_AGENT }}
+  Pipeline_Update:
+    if: always()
+    needs: [Cluster-Scope-Mode, Namespaced-Scope-Mode]
+    defaults:
+      run:
+        working-directory: /go/src
+    env:
+      CI_PIPELINE_ID: ${{ github.run_id }}
+      PORTAL_TEST: "true"
+      UPDATE_WEBSITE: "true"
+      GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+    container:
+      image: "litmuschaos/litmus-e2e:ci"
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pipeline Update
+        run: make pipeline-status-update
