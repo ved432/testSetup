@@ -234,7 +234,7 @@ jobs:
       UPDATE_WEBSITE: "true"
       GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     container:
-      image: "litmuschaos/litmus-e2e:ci"
+      image: "jonsy13/e2e:latest"
 
     runs-on: ubuntu-latest
     steps:
