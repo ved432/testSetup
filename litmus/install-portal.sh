@@ -22,7 +22,7 @@ helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
 kubectl create ns litmus
 helm install chaos litmuschaos/litmus-2-0-0-beta --namespace=litmus --devel
 
-kubectl apply -f litmus-portal-setup.yml
+# kubectl apply -f litmus-portal-setup.yml
 
 ## TODO: To be Removed
 kubectl get pods -n litmus
