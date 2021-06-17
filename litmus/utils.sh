@@ -65,7 +65,7 @@ function verify_deployment(){
     RETRY=0; RETRY_MAX=40;
 
     while [[ $RETRY -lt $RETRY_MAX ]]; do
-        DEPLOYMENT_LIST=$(eval "kubectl get deployments -n ${namespace} | awk '/$deployment /'" | awk '{print $1}') # list of multiple deployments when starting with the same name
+        DEPLOYMENT_LIST=$(eval "kubectl get deployments -n ${namespace} | awk '/${deployment} /' | awk '{print $1}'") # list of multiple deployments when starting with the same name
         if [[ -z "$DEPLOYMENT_LIST" ]]; then
         RETRY=$((RETRY+1))
         echo "Retry: ${RETRY}/${RETRY_MAX} - Deployment not found - waiting 15s"
