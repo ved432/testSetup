@@ -36,17 +36,17 @@ echo "------------- Verifying Namespace, Deployments, pods and Images for Litmus
 verify_namespace litmus
 
 # Deployments verification
-verify_deployment litmusportal-frontend litmus
-verify_deployment litmusportal-server litmus
+verify_deployment frontend litmus
+verify_deployment server litmus
 
 # Pods verification
-verify_pod litmusportal-frontend litmus
-verify_pod litmusportal-server litmus
+verify_pod frontend litmus
+verify_pod server litmus
 verify_pod mongo litmus
 
 # Images verification
-verify_deployment_image $version litmusportal-frontend litmus
-verify_deployment_image $version litmusportal-server litmus
+# verify_deployment_image $version frontend litmus
+# verify_deployment_image $version server litmus
 
 if [[ "$loadBalancer" == "true" ]];then
     kubectl patch svc litmusportal-server-service -p '{"spec": {"type": "LoadBalancer"}}' -n litmus

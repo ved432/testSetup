@@ -41,16 +41,16 @@ echo "------------- Verifying Namespace, Deployments, pods and Images for Litmus
 verify_namespace ${LITMUS_PORTAL_NAMESPACE}
 
 # Deployments verification
-verify_deployment litmusportal-frontend ${LITMUS_PORTAL_NAMESPACE}
-verify_deployment litmusportal-server ${LITMUS_PORTAL_NAMESPACE}
+verify_deployment frontend ${LITMUS_PORTAL_NAMESPACE}
+verify_deployment server ${LITMUS_PORTAL_NAMESPACE}
 
 # Pods verification
-verify_pod litmusportal-frontend ${LITMUS_PORTAL_NAMESPACE}
-verify_pod litmusportal-server ${LITMUS_PORTAL_NAMESPACE}
+verify_pod frontend ${LITMUS_PORTAL_NAMESPACE}
+verify_pod server ${LITMUS_PORTAL_NAMESPACE}
 
 # Images verification
-verify_deployment_image $version litmusportal-frontend ${LITMUS_PORTAL_NAMESPACE}
-verify_deployment_image $version litmusportal-server ${LITMUS_PORTAL_NAMESPACE}
+# verify_deployment_image $version frontend ${LITMUS_PORTAL_NAMESPACE}
+# verify_deployment_image $version server ${LITMUS_PORTAL_NAMESPACE}
 
 
 # Backend-Server-service using LoadBalancer
