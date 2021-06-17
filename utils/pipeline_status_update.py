@@ -73,7 +73,7 @@ def get_file_to_update(pipeline,tag):
               else:
                      raise Exception('Sorry, no pipeline found with name '+pipeline)
 
-repo = github_token.get_repo("Jonsy13/Pipeline-Updates-Test)
+repo = github_token.get_repo("Jonsy13/Pipeline-Updates-Test")
 b= repo.get_branch(branch="master")
 filename = get_file_to_update(pipeline,tag)
 print("filename to be updated: "+filename)

@@ -8,18 +8,26 @@ version=${PORTAL_VERSION}
 loadBalancer=${LOAD_BALANCER}
 LITMUS_PORTAL_NAMESPACE=${PORTAL_NAMESPACE}
 
+
+# echo "========================= Manifest installation ============================"
+# kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
+# kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+# curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-k8s-template.yml --output litmus-portal-namespaced-k8s-template.yml
+
+# # Manifest Manipulation
+# envsubst < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+# manifest_image_update $version ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+
+# cat ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+
+# # Applying the manifest
+# kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
+
+echo "========================= Helm Installation ==================================="
+helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
-curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-k8s-template.yml --output litmus-portal-namespaced-k8s-template.yml
+helm install chaos litmuschaos/litmus-2-0-0-beta --namespace=${LITMUS_PORTAL_NAMESPACE} --devel --set portalScope=namespace
 
-# Manifest Manipulation
-envsubst < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
-manifest_image_update $version ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
-
-cat ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
-
-# Applying the manifest
-kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 
 # TODO: To be Removed
 kubectl get pods -n ${LITMUS_PORTAL_NAMESPACE}

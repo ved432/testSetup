@@ -12,9 +12,15 @@ loadBalancer=${LOAD_BALANCER}
 # cp $path/.kube/config ~/.kube/config
 # cp $path/.kube/admin.conf ~/.kube/config
 
-echo "----------------Installing Litmus-Portal----------------------"
-curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
-manifest_image_update $version litmus-portal-setup.yml
+# echo "----------------Installing Litmus-Portal----------------------"
+# curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
+# manifest_image_update $version litmus-portal-setup.yml
+
+
+echo "================ Helm Installation ==========================="
+helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
+kubectl create ns litmus
+helm install chaos litmuschaos/litmus-2-0-0-beta --namespace=litmus --devel
 
 kubectl apply -f litmus-portal-setup.yml
 
