@@ -3,7 +3,6 @@
 source litmus/utils.sh
 # source utils.sh
 
-path=$(pwd)
 version=${PORTAL_VERSION}
 loadBalancer=${LOAD_BALANCER}
 LITMUS_PORTAL_NAMESPACE=${PORTAL_NAMESPACE}
@@ -13,7 +12,7 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/lit
 curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-k8s-template.yml --output litmus-portal-namespaced-k8s-template.yml
 
 # Manifest Manipulation
-envsubst < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+sed -e "s|#{AGENT-NAMESPACE}|${LITMUS_PORTAL_NAMESPACE}|g" litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 manifest_image_update $version ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 
 cat ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
@@ -33,8 +32,7 @@ echo "------------- Verifying Namespace, Deployments, pods and Images for Litmus
 verify_namespace ${LITMUS_PORTAL_NAMESPACE}
 
 # Deployments verification
-verify_deployment litmusportal-frontend ${LITMUS_PORTAL_NAMESPACE}
-verify_deployment litmusportal-server ${LITMUS_PORTAL_NAMESPACE}
+verify_all_components litmusportal-frontend,litmusportal-server ${LITMUS_PORTAL_NAMESPACE}
 
 # Pods verification
 verify_pod litmusportal-frontend ${LITMUS_PORTAL_NAMESPACE}
