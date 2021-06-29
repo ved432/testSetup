@@ -65,7 +65,7 @@ function verify_deployment(){
     RETRY=0; RETRY_MAX=40;
 
     while [[ $RETRY -lt $RETRY_MAX ]]; do
-        DEPLOYMENT_LIST=$(eval "kubectl get deployments -n ${namespace} | awk '/${deployment} /'" | awk '{print $1}') # list of multiple deployments when starting with the same name
+        DEPLOYMENT_LIST=$(eval "kubectl get deployments -n ${namespace} | awk '/$deployment /'" | awk '{print $1}') # list of multiple deployments when starting with the same name
         if [[ -z "$DEPLOYMENT_LIST" ]]; then
         RETRY=$((RETRY+1))
         echo "Retry: ${RETRY}/${RETRY_MAX} - Deployment not found - waiting 15s"
@@ -132,4 +132,16 @@ function verify_deployment_image(){
     else 
         echo "$deployment deployment with image ${image} verified"
     fi
+}
+
+## Function to verify all given deployments(comma-separated) in a given namespace
+function verify_all_components(){
+    namespace=$1
+    components=$2
+    echo "Verifying all required Deployments"
+
+    for i in $(echo $components | sed "s/,/ /g")
+    do
+        verify_deployment ${i} ${PORTAL_NAMESPACE}
+    done
 }
