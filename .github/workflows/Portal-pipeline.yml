@@ -177,7 +177,7 @@ jobs:
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${{ secrets.CONTROL_PLANE_COMPONENTS }} litmus
+          verify_all_components ${{ secrets.CONTROL_PLANE_COMPONENTS }} scope
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
