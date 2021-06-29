@@ -59,7 +59,7 @@ describe("Testing the create Workflow Utility", () => {
   });
 
   it("Checking Schedules Table for scheduled Workflow", () => {
-    cy.GraphqlWait("scheduleDetails", "listSchedules");
+    cy.GraphqlWait("workflowListDetails", "listSchedules");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.wait(1000);
