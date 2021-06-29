@@ -136,12 +136,12 @@ function verify_deployment_image(){
 
 ## Function to verify all given deployments(comma-separated) in a given namespace
 function verify_all_components(){
-    namespace=$1
-    components=$2
+    components=$1
+    namespace=$2
     echo "Verifying all required Deployments"
 
     for i in $(echo $components | sed "s/,/ /g")
     do
-        verify_deployment ${i} ${PORTAL_NAMESPACE}
+        verify_deployment ${i} ${namespace}
     done
 }
