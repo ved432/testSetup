@@ -78,7 +78,10 @@ jobs:
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${{ secrets.EXECUTION_PLANE_COMPONENTS }} litmus
+          verify_all_components ${ COMPONENTS } litmus
+          wait_for_pods litmus 720
+        env:
+          COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
@@ -179,7 +182,10 @@ jobs:
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${{ secrets.EXECUTION_PLANE_COMPONENTS }} scope
+          verify_all_components ${COMPONENTS} scope
+          wait_for_pods scope 720
+        env:
+          COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2

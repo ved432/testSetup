@@ -16,7 +16,7 @@ describe("Testing the create Workflow Utility", () => {
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
     cy.chooseWorkflow(0, 1);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    cy.wait(500);
+    cy.wait(500); // Waiting for Workflow Details to get filled
     cy.configureWorkflowSettings(
       workflows.nonRecurringworkflowName,
       workflows.nonRecurringworkflowDescription,
