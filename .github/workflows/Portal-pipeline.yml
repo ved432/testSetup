@@ -22,11 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: AbsaOSS/k3d-action@v1.4.0
-        name: "Create 1st Cluster"
+      - name: Create 1st Cluster
+        uses: nolar/setup-k3d-k3s@v1
         with:
-          cluster-name: ${{ env.SELF_AGENT }}
-          args: --agents 1
+          version: v1.21
+          k3d-name: ${{ env.SELF_AGENT }}
+          k3d-args: --servers 2
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -42,11 +44,13 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
 
-      - uses: AbsaOSS/k3d-action@v1.4.0
-        name: "Create 2nd Cluster"
+      - name: Create 2nd Cluster
+        uses: nolar/setup-k3d-k3s@v1
         with:
-          cluster-name: ${{ env.EXTERNAL_AGENT }}
-          args: --agents 1
+          version: v1.21
+          k3d-name: ${{ env.EXTERNAL_AGENT }}
+          k3d-args: --servers 2
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configuring and Testing the Agent Installation
         run: |
