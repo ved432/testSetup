@@ -27,8 +27,6 @@ jobs:
         with:
           version: v1.21
           k3d-name: ${{ env.SELF_AGENT }}
-          # k3d-args: --servers 2
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -49,8 +47,6 @@ jobs:
         with:
           version: v1.21
           k3d-name: ${{ env.EXTERNAL_AGENT }}
-          # k3d-args: --servers 2
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configuring and Testing the Agent Installation
         run: |
