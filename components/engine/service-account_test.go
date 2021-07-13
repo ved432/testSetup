@@ -6,35 +6,26 @@ import (
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
-	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 )
 
-func TestAppInfo(t *testing.T) {
+func TestSeriveAccount(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for appinfo in engine
+//BDD Tests for serviceaccount in engine
 //The test is performed over pod-delete experiment
 //where wrong app info is provided and we test if experiment gets fail
-var _ = Describe("BDD of appinfo test", func() {
+var _ = Describe("BDD of serviceaccount test", func() {
 
-	// BDD for cleaning all components
-	Context("Check for litmus components", func() {
-
-		It("Should delete all the litmus CRs", func() {
-			By("[Cleanup]: Removing Litmus Components")
-			err := pkg.Cleanup()
-			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
-
-		})
-
-	})
-
+	// BDD TEST CASE 1
 	Context("Check for litmus components", func() {
 
 		It("Should check for creation of runner pod", func() {
@@ -53,7 +44,7 @@ var _ = Describe("BDD of appinfo test", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "appinfo-engine")
+			environment.GetENV(&testsDetails, "pod-delete", "serviceaccount-engine")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -62,33 +53,26 @@ var _ = Describe("BDD of appinfo test", func() {
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
-			//Providing wrong appinfo
-
-			testsDetails.AppLabel = "run=dummy"
+			//Providing wrong serviceaccount
+			testsDetails.ChaosServiceAccount = "dummy-sa"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod creation
+			//Runner Pod Should Not Get Created due to invalid sa name
+			//The chaos pod logs should not get printed
 			By("[Status]: Runner pod running status check")
-			//setting appns for runner pod status check
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Runner pod created even with invalid service account name")
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
-
-			//Waiting for chaos pod to get completed
-			//And Print the logs of the chaos pod
-			By("[Status]: Wait for chaos pod completion and then print logs")
-			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Chaos pod created even with invalid service account name")
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			chaosResult, err := pkg.GetChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the chaosresult, due to {%v}", err)
-			Expect(chaosResult).To(Equal("Fail"), "ChaosResult verdict is not set to Fail, due to {%v}", err)
+			_, err = pkg.GetChaosResultVerdict(&testsDetails, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: ChaosResult created even with invalid service account name")
 
 		})
 	})
@@ -108,24 +92,24 @@ var _ = Describe("BDD of appinfo test", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "appinfo-engine")
+			environment.GetENV(&testsDetails, "pod-delete", "serviceaccount-engine")
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
-			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get ChaosEngine Verdict due to, {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not set to Fail,")
+			chaosEngine, _ := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
+			Expect(len(chaosEngine.Status.Experiments)).To(Equal(0), "[TEST FAILED]: ChaosEngine verdict is not nil")
 
 		})
 	})
-	// // BDD for cleaning all components
-	// Context("Cleanup litmus components", func() {
+	// BDD for cleaning all components
+	Context("Cleanup litmus components", func() {
 
-	// 	It("Should delete all the litmus CRs", func() {
-	// 		By("[Cleanup]: Removing Litmus Components")
-	// 		err := pkg.Cleanup()
-	// 		Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
+		It("Should delete all the litmus CRs", func() {
+			By("[Cleanup]: Removing Litmus Components")
+			err := pkg.Cleanup()
+			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
 
-	// 	})
-	// })
+		})
+
+	})
 })

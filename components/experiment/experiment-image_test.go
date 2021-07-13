@@ -1,8 +1,7 @@
-package engine
+package experiment
 
 import (
 	"testing"
-	"time"
 
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -14,14 +13,15 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestEngineState(t *testing.T) {
+func TestExperimentImage(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for engine-state in engine
-//The test is performed over pod-cpu-hog experiment
-var _ = Describe("BDD of engine-state test", func() {
+//BDD Tests for experiment-image in engine
+//The test is performed over pod-delete experiment
+//where wrong experiment image is provided and we test if experiment gets fail
+var _ = Describe("BDD of experiment image test", func() {
 
 	// BDD TEST CASE 1
 	Context("Check for litmus components", func() {
@@ -42,7 +42,7 @@ var _ = Describe("BDD of engine-state test", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "engine-state")
+			environment.GetENV(&testsDetails, "pod-delete", "experiment-image-engine")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -51,39 +51,32 @@ var _ = Describe("BDD of engine-state test", func() {
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
+			// Provide wrong experiment image name
+			testsDetails.GoExperimentImage = "litmuschaos/dummy-image:v1"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			//setting appns for runner pod status check
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
-
-			//Waiting for chaosresult creation from experiment
-			log.Info("[Wait]: waiting for chaosresult creation from experiment")
-			time.Sleep(15 * time.Second)
-
-			//Abort the chaos experiment
-			By("[Abort]: Abort the chaos by patching engine state")
-			err = pkg.ChaosAbort(&testsDetails)
-			Expect(err).To(BeNil(), "[Abort]: Chaos abort failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "unable to create chaos pod, due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			//The chaos pod logs should not get printed
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Unable to remove chaos pod after abort")
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: chaos pod runs with invalid experiment image, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			chaosResult, err := pkg.GetChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the chaosresult Verdict, due to {%v}", err)
-			Expect(chaosResult).To(Equal("Stopped"), "ChasoResult Verdict is not Stopped, due to {%v}", err)
+			_, err = pkg.GetChaosResultVerdict(&testsDetails, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: ChasoResult created")
 
 		})
 	})
@@ -103,18 +96,18 @@ var _ = Describe("BDD of engine-state test", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "engine-state")
+			environment.GetENV(&testsDetails, "pod-delete", "experiment-image-engine")
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Fail to get the chaosengine Verdict, due to {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("Stopped"), "ChaosEngine Verdict is not Stopped, due to {%v}", err)
+			Expect(chaosEngineVerdict).To(Equal("Awaited"), "ChaosEngine Verdict is not Awaited, due to {%v}", err)
 
 		})
 	})
 	// BDD for cleaning all components
-	Context("Cleanup litmus components", func() {
+	Context("Check for litmus components", func() {
 
 		It("Should delete all the litmus CRs", func() {
 			By("[Cleanup]: Removing Litmus Components")
