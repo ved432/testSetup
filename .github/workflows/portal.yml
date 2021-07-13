@@ -13,7 +13,7 @@ jobs:
   Cluster-Scope-Mode:
     runs-on: ubuntu-20.04
     container:
-      image: docker pull arm64v8/ubuntu:20.10
+      image: arm64v8/ubuntu:20.10
     steps:
       - name: Check Arch
         run: uname -a
