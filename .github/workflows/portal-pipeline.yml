@@ -234,7 +234,9 @@ jobs:
         name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
-          args: --agents 3
+          args: >-
+            --agents 3
+            --k3s-server-arg "--no-deploy=traefik"
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -254,7 +256,9 @@ jobs:
         name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
-          args: --agents 1
+          args: >-
+            --agents 1
+            --k3s-server-arg "--no-deploy=traefik"
 
       - name: Configuring and Testing the Agent Installation
         run: |
