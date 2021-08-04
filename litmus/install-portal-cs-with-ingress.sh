@@ -44,7 +44,7 @@ helm repo update
 helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 3.33.0 --namespace litmus
 
 # Applying Ingress Manifest for Accessing Portal
-kubectl apply -f litmus/ingress.yml
+kubectl apply -f litmus/ingress.yml -n litmus
 
 wait_for_ingress litmus-ingress litmus
 
