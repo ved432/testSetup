@@ -36,7 +36,32 @@ function wait_for_loadbalancer(){
         else
         echo "Waiting for end point..."; 
         IP=$(eval "kubectl get svc litmusportal-frontend-service -n ${namespace} --template='{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}'" | awk '{print $1}');
-        echo "IP"
+        echo "IP = ${IP}"
+        [ -z "$IP" ] && sleep 10; 
+        fi
+    done; 
+}
+
+## Function to wait for ingress to get an address
+function wait_for_ingress(){
+    # Variable to store ingress address
+    IP="";
+    Namespace=$2
+    Ingress=$1
+    # Variable to store waiting time for getting IP
+    wait_period=0
+
+    # Waiting for address assignment for ingress 
+    while [ -z $IP ]; 
+    do
+    wait_period=$(($wait_period+10))
+        if [ $wait_period -gt 300 ];then
+        echo "Couldn't get Ingress address in 5 minutes, exiting now.."
+        exit 1
+        else
+        echo "Waiting for ingress end point..."; 
+        IP=$(eval "kubectl get ing ${Ingress} -n ${Namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'" | awk '{print $1}');
+        echo "IP = ${IP}"
         [ -z "$IP" ] && sleep 10; 
         fi
     done; 

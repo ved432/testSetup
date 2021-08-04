@@ -44,7 +44,9 @@ helm repo update
 helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 3.33.0 --namespace litmus
 
 # Applying Ingress Manifest for Accessing Portal
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/ingress.yml
+kubectl apply -f litmus/ingress.yml
+
+wait_for_ingress litmus-ingress litmus
 
 # Ingress IP for accessing Portal
 export AccessURL=$(kubectl get ing litmus-ingress -n litmus -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
