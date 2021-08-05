@@ -51,6 +51,5 @@ describe("Checking functionality of Login Page", () => {
     cy.login(user.AdminName, user.AdminPassword);
     cy.wait("@loginResponse").its("response.statusCode").should("eq", 200);
     cy.url().should("contain", "/getStarted");
-    cy.contains("Set your new Password");
   });
 });
