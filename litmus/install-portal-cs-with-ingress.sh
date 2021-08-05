@@ -5,11 +5,10 @@ source litmus/utils.sh
 version=${PORTAL_VERSION}
 loadBalancer=${LOAD_BALANCER}
 
-echo -e "\n---------------Installing Litmus-Portal using Manifest----------\n"
-curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
-manifest_image_update $version litmus-portal-setup.yml
+echo -e "\n---------------Installing Litmus-Portal with ingress enabled----------\n"
+manifest_image_update $version litmus/portal-ingress-enabled-manifest.yml
 
-kubectl apply -f litmus-portal-setup.yml
+kubectl apply -f litmus/portal-ingress-enabled-manifest.yml
 
 echo -e "\n---------------Pods running in Litmus Namespace---------------\n"
 kubectl get pods -n litmus
