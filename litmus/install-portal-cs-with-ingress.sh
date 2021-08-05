@@ -53,4 +53,4 @@ wait_for_ingress litmus-ingress litmus
 # Ingress IP for accessing Portal
 export AccessURL=$(kubectl get ing litmus-ingress -n litmus -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
 
-echo "URL="http://$AccessURL" >> $GITHUB_ENV
+echo "URL=http://$AccessURL" >> $GITHUB_ENV
