@@ -1,0 +1,57 @@
+---
+## This worflow will build the litmus-e2e image for every new commit.
+name: e2e
+on: [push]
+
+env:
+  SELF_AGENT: "self-agent"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: AbsaOSS/k3d-action@v1.5.0
+        name: Create 1st Cluster
+        with:
+          cluster-name: ${{ env.SELF_AGENT }}
+          args: >-
+            --agents 3
+            --k3s-server-arg "--no-deploy=traefik"
+
+      - name: Configuring and Testing the Cluster Installation
+        run: |
+          kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
+      - run: |
+          kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
+          export CLUSTER_NAME=${SELF_AGENT}
+          KUBE_API_SERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
+          KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
+          echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
+          echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
+
+      - name: Deploying Litmus-Portal using **k8s-manifest**
+        run: |
+          chmod 755 ./litmus/install-portal.sh
+          ./litmus/install-portal.sh
+        env:
+          PORTAL_VERSION: "ci"
+          LOAD_BALANCER: "false"
+
+      - name: Running Cluster Tests
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Parallel_Tests/ClusterOperations/*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
+          CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
+          CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
