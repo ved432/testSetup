@@ -27,6 +27,7 @@ jobs:
           kubectl get nodes
           kubectl get pods -n kube-system
 
+      # Fetching Access Point & Token for accessing kube api server
       - run: |
           kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
           export CLUSTER_NAME=k3d-${SELF_AGENT}
@@ -34,6 +35,10 @@ jobs:
           KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
           echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
           echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
+
+      # RBAC for allowing Cypress Runner to access Cluster resources
+      - run: |
+          kubectl apply -f Cypress/cypress-rbac.yml
 
       - name: Deploying Litmus-Portal using **k8s-manifest**
         run: |
