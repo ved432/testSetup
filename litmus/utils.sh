@@ -200,17 +200,18 @@ function get_access_point(){
     mode=$2
 
     if [[ "$mode" == "LoadBalancer" ]];then
+        echo "Hii"
             # LoadBalancer setup
     elif [[ "$mode" == "Ingress" ]];then
-            setup_ingress ${namespace}
-            # Ingress IP for accessing Portal
-            export AccessURL=$(kubectl get ing litmus-ingress -n ${namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
-            echo "URL=$AccessURL" >> $GITHUB_ENV
-        else 
-            export NODE_NAME=$(kubectl -n ${namespace} get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
-            export NODE_IP=$(kubectl -n ${namespace} get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
-            export NODE_PORT=$(kubectl -n ${namespace} get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
-            export AccessURL="http://$NODE_IP:$NODE_PORT"
-            echo "URL=$AccessURL" >> $GITHUB_ENV
+        setup_ingress ${namespace}
+        # Ingress IP for accessing Portal
+        export AccessURL=$(kubectl get ing litmus-ingress -n ${namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
+        echo "URL=$AccessURL" >> $GITHUB_ENV
+    else 
+        export NODE_NAME=$(kubectl -n ${namespace} get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
+        export NODE_IP=$(kubectl -n ${namespace} get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+        export NODE_PORT=$(kubectl -n ${namespace} get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
+        export AccessURL="http://$NODE_IP:$NODE_PORT"
+        echo "URL=$AccessURL" >> $GITHUB_ENV
     fi
 }
