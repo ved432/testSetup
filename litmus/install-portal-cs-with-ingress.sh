@@ -46,6 +46,8 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 3.33.0 --namespace litmus
 
+kubectl get pods -n litmus
+
 wait_for_pods litmus 360
 
 # Applying Ingress Manifest for Accessing Portal

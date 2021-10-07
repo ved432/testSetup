@@ -235,7 +235,7 @@ jobs:
         with:
           cluster-name: ${{ env.SELF_AGENT }}
           args: >-
-            --agents 3
+            --agents 4
             --k3s-server-arg "--no-deploy=traefik"
 
       - name: Configuring and Testing the Cluster Installation
