@@ -36,11 +36,12 @@ jobs:
 
       - name: Deploying Litmus-Portal using **k8s-manifest**
         run: |
-          chmod 755 ./litmus/install-portal.sh
-          ./litmus/install-portal.sh
+          chmod 755 ./litmus/install-portal-cs-with-ingress.sh
+          ./litmus/install-portal-cs-with-ingress.sh
         env:
           PORTAL_VERSION: "ci"
-          LOAD_BALANCER: "false"
+          ACCESS_TYPE: "NodePort"
+          NAMESPACE: "litmus"
 
       # Fetching Access Point & Token for accessing kube api server
       - run: |
