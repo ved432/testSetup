@@ -73,4 +73,5 @@ else
     exit 1
 fi
 
+wait_for_portal_to_be_ready
 get_access_point ${namespace} ${accessType}
