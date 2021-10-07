@@ -24,6 +24,8 @@ function install_portal_ns_mode(){
     # Installing CRDS, required for namespaced mode
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 
+    # Exporting namespace variable for manifest updation
+    export LITMUS_PORTAL_NAMESPACE=${namespace}
     # Downloading manifest for namespaced mode installation
     curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-k8s-template.yml --output litmus-portal-namespaced-k8s-template.yml
 
