@@ -201,7 +201,7 @@ function get_access_point(){
 
     if [[ "$mode" == "LoadBalancer" ]];then
             # LoadBalancer setup
-    else if [[ "$mode" == "Ingress" ]];then
+    elif [[ "$mode" == "Ingress" ]];then
             setup_ingress ${namespace}
             # Ingress IP for accessing Portal
             export AccessURL=$(kubectl get ing litmus-ingress -n ${namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
