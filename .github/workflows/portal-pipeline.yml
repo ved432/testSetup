@@ -252,6 +252,19 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
 
+      # Fetching Access Point & Token for accessing kube api server
+      - run: |
+          kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
+          export CLUSTER_NAME=k3d-${SELF_AGENT}
+          KUBE_API_SERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
+          KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
+          echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
+          echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
+
+      # RBAC for allowing Cypress Runner to access Cluster resources
+      - run: |
+          kubectl apply -f Cypress/cypress-rbac.yml
+
       - uses: AbsaOSS/k3d-action@v1.5.0
         name: Create 2nd Cluster
         with:
@@ -266,13 +279,13 @@ jobs:
           kubectl get nodes
           kubectl get pods -n kube-system
 
-      # - name: Installing LitmusCTL on Agent Cluster
-      #   run: |
-      #     curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
-      #     tar -zxvf litmusctl-linux-amd64-master.tar.gz
-      #     chmod +x litmusctl
-      #     sudo mv litmusctl /usr/local/bin/litmusctl
-      #     litmusctl version
+      - name: Installing LitmusCTL on Agent Cluster
+        run: |
+          curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+          tar -zxvf litmusctl-linux-amd64-master.tar.gz
+          chmod +x litmusctl
+          sudo mv litmusctl /usr/local/bin/litmusctl
+          litmusctl version
 
       - name: Running basic tests (Login and Onboarding Tests)
         uses: cypress-io/github-action@v2
@@ -306,6 +319,8 @@ jobs:
           env: true
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
+          CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
+          CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
 
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
