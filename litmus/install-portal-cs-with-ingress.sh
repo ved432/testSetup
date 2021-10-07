@@ -3,7 +3,8 @@
 source litmus/utils.sh
 
 version=${PORTAL_VERSION}
-loadBalancer=${LOAD_BALANCER}
+accessType=${ACCESS_TYPE}
+namespace=${NAMEPACE}
 
 echo -e "\n---------------Installing Litmus-Portal in Cluster Scope----------\n"
 curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
@@ -11,51 +12,27 @@ manifest_image_update $version litmus-portal-setup.yml
 
 kubectl apply -f litmus-portal-setup.yml
 
-echo -e "\n---------------Pods running in Litmus Namespace---------------\n"
-kubectl get pods -n litmus
+echo -e "\n---------------Pods running in ${namespace} Namespace---------------\n"
+kubectl get pods -n ${namespace}
 
 echo -e "\n---------------Waiting for all pods to be ready---------------\n"
 # Waiting for pods to be ready (timeout - 360s)
-wait_for_pods litmus 360
+wait_for_pods ${namespace} 360
 
 echo -e "\n------------- Verifying Namespace, Deployments, pods and Images for Litmus-Portal ------------------\n"
 # Namespace verification
-verify_namespace litmus
+verify_namespace ${namespace}
 
 # Deployments verification
-verify_all_components litmusportal-frontend,litmusportal-server litmus
+verify_all_components litmusportal-frontend,litmusportal-server ${namespace}
 
 # Pods verification
-verify_pod litmusportal-frontend litmus
-verify_pod litmusportal-server litmus
-verify_pod mongo litmus
+verify_pod litmusportal-frontend ${namespace}
+verify_pod litmusportal-server ${namespace}
+verify_pod mongo ${namespace}
 
 # Images verification
-verify_deployment_image $version litmusportal-frontend litmus
-verify_deployment_image $version litmusportal-server litmus
+verify_deployment_image $version litmusportal-frontend ${namespace}
+verify_deployment_image $version litmusportal-server ${namespace}
 
-# Updating the svc to ClusterIP
-kubectl patch svc litmusportal-frontend-service -n litmus -p '{"spec": {"type": "ClusterIP"}}'
-kubectl patch svc litmusportal-server-service -n litmus -p '{"spec": {"type": "ClusterIP"}}'
-
-# Enabling Ingress in Portal
-kubectl set env deployment/litmusportal-server -n litmus --containers="graphql-server" INGRESS="true"
-
-# Installing ingress-nginx
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 3.33.0 --namespace litmus
-
-kubectl get pods -n litmus
-
-wait_for_pods litmus 360
-
-# Applying Ingress Manifest for Accessing Portal
-kubectl apply -f litmus/ingress.yml -n litmus
-
-wait_for_ingress litmus-ingress litmus
-
-# Ingress IP for accessing Portal
-export AccessURL=$(kubectl get ing litmus-ingress -n litmus -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
-
-echo "URL=http://$AccessURL" >> $GITHUB_ENV
+get_access_point ${namespace} ${accessType}

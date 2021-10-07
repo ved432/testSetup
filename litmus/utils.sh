@@ -170,3 +170,47 @@ function verify_all_components(){
         verify_deployment ${i} ${namespace}
     done
 }
+
+function setup_ingress(){
+    namespace=$1
+    # Updating the svc to ClusterIP
+    kubectl patch svc litmusportal-frontend-service -n ${namespace} -p '{"spec": {"type": "ClusterIP"}}'
+    kubectl patch svc litmusportal-server-service -n ${namespace} -p '{"spec": {"type": "ClusterIP"}}'
+
+    # Enabling Ingress in Portal
+    kubectl set env deployment/litmusportal-server -n ${namespace} --containers="graphql-server" INGRESS="true"
+
+    # Installing ingress-nginx
+    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    helm repo update
+    helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 3.33.0 --namespace ${namespace}
+
+    kubectl get pods -n ${namespace}
+
+    wait_for_pods ${namespace} 360
+
+    # Applying Ingress Manifest for Accessing Portal
+    kubectl apply -f litmus/ingress.yml -n ${namespace}
+    wait_for_ingress litmus-ingress ${namespace}
+}
+
+
+function get_access_point(){
+    namespace=$1
+    mode=$2
+
+    if [[ "$mode" == "LoadBalancer" ]];then
+            # LoadBalancer setup
+    else if [[ "$mode" == "Ingress" ]];then
+            setup_ingress ${namespace}
+            # Ingress IP for accessing Portal
+            export AccessURL=$(kubectl get ing litmus-ingress -n ${namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
+            echo "URL=$AccessURL" >> $GITHUB_ENV
+        else 
+            export NODE_NAME=$(kubectl -n ${namespace} get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
+            export NODE_IP=$(kubectl -n ${namespace} get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+            export NODE_PORT=$(kubectl -n ${namespace} get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
+            export AccessURL="http://$NODE_IP:$NODE_PORT"
+            echo "URL=$AccessURL" >> $GITHUB_ENV
+    fi
+}
