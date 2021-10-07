@@ -4,7 +4,7 @@ source litmus/utils.sh
 
 version=${PORTAL_VERSION}
 accessType=${ACCESS_TYPE}
-namespace=${NAMEPACE}
+namespace=${NAMESPACE}
 
 echo -e "\n---------------Installing Litmus-Portal in Cluster Scope----------\n"
 curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
