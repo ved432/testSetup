@@ -64,9 +64,9 @@ function wait_for_portal_to_be_ready(){
     verify_deployment_image $version litmusportal-server ${namespace}
 }
 
-if [[ "$installation_mode" == "CS-MODE" ]]then;
+if [[ "$installation_mode" == "CS-MODE" ]];then
     install_portal_cs_mode
-elif [[ "$installation_mode" == "NS-MODE" ]]then;
+elif [[ "$installation_mode" == "NS-MODE" ]];then
     install_portal_ns_mode
 else
     echo "Selected Mode Not Found"
