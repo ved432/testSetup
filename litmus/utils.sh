@@ -171,6 +171,7 @@ function verify_all_components(){
     done
 }
 
+# Function to setup Ingress in given namespace for ChaosCenter
 function setup_ingress(){
     namespace=$1
     # Updating the svc to ClusterIP
@@ -194,7 +195,7 @@ function setup_ingress(){
     wait_for_ingress litmus-ingress ${namespace}
 }
 
-
+# Function to get Access point of ChaosCenter based on Service type(mode) deployed in given namespace
 function get_access_point(){
     namespace=$1
     mode=$2
