@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        AcessType: [NodePort, Ingress]
+        AcessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
@@ -149,7 +149,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        AcessType: [NodePort, Ingress]
+        AcessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 

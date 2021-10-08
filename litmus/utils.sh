@@ -198,21 +198,31 @@ function setup_ingress(){
 # Function to get Access point of ChaosCenter based on Service type(mode) deployed in given namespace
 function get_access_point(){
     namespace=$1
-    mode=$2
+    accessType=$2
 
-    if [[ "$mode" == "LoadBalancer" ]];then
-        echo "Hii"
-            # LoadBalancer setup
-    elif [[ "$mode" == "Ingress" ]];then
+    if [[ "$accessType" == "LoadBalancer" ]];then
+
+        kubectl patch svc litmusportal-server-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
+        wait_for_loadbalancer litmusportal-frontend-service ${namespace}
+        export loadBalancerIP=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        export AccessURL="http://$loadBalancerIP:9091"
+        wait_for_url $AccessURL
+        echo "URL=$AccessURL" >> $GITHUB_ENV
+
+    elif [[ "$acessType" == "Ingress" ]];then
+
         setup_ingress ${namespace}
         # Ingress IP for accessing Portal
         export AccessURL=$(kubectl get ing litmus-ingress -n ${namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
         echo "URL=http://$AccessURL" >> $GITHUB_ENV
+
     else 
+        # By default NodePort will be used. 
         export NODE_NAME=$(kubectl -n ${namespace} get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
         export NODE_IP=$(kubectl -n ${namespace} get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
         export NODE_PORT=$(kubectl -n ${namespace} get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
         export AccessURL="http://$NODE_IP:$NODE_PORT"
         echo "URL=$AccessURL" >> $GITHUB_ENV
+
     fi
 }
