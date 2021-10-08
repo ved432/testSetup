@@ -35,7 +35,7 @@ function wait_for_loadbalancer(){
         exit 1
         else
         echo "Waiting for loadBalancer end point..."; 
-        IP=$(kubectl get services ${SVC} -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        IP=$(kubectl get services ${SVC} -n ${Namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
         echo "IP = ${IP}"
         [ -z "$IP" ] && sleep 10; 
         fi
