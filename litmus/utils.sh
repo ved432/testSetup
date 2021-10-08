@@ -34,8 +34,8 @@ function wait_for_loadbalancer(){
         echo "Couldn't get LoadBalancer IP in 5 minutes, exiting now.."
         exit 1
         else
-        echo "Waiting for end point..."; 
-        IP=$(eval "kubectl get svc litmusportal-frontend-service -n ${namespace} --template='{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}'" | awk '{print $1}');
+        echo "Waiting for loadBalancer end point..."; 
+        IP=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
         echo "IP = ${IP}"
         [ -z "$IP" ] && sleep 10; 
         fi
