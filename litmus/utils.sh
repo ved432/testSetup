@@ -35,7 +35,7 @@ function wait_for_loadbalancer(){
         exit 1
         else
         echo "Waiting for loadBalancer end point..."; 
-        IP=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        IP=$(kubectl get services ${SVC} -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
         echo "IP = ${IP}"
         [ -z "$IP" ] && sleep 10; 
         fi
@@ -203,6 +203,7 @@ function get_access_point(){
     if [[ "$accessType" == "LoadBalancer" ]];then
 
         kubectl patch svc litmusportal-server-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
+        wait_for_pods ${namespace} 360
         wait_for_loadbalancer litmusportal-frontend-service ${namespace}
         export loadBalancerIP=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
         export AccessURL="http://$loadBalancerIP:9091"
