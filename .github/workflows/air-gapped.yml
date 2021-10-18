@@ -9,7 +9,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     # Pulling kind/node image
-      - run: docker pull kindest/node:v1.21.1 && docker save kindest/node:v1.21.1 -o assets/node.tar
+      - run: |
+          mkdir assets 
+          docker pull kindest/node:v1.21.1 && docker save kindest/node:v1.21.1 -o assets/node.tar
 
     # Creating a cluster with network none & mounting all assets inside the container as a host.
       - run: |
