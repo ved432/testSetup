@@ -204,7 +204,6 @@ function get_access_point(){
 
         kubectl patch svc litmusportal-frontend-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
         export loadBalancer=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-        echo $loadBalancer
         wait_for_pods ${namespace} 360
         wait_for_loadbalancer litmusportal-frontend-service ${namespace}
         export loadBalancerIP=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
