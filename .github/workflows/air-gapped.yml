@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  my_job:
+  air-gapped-job:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -17,5 +17,5 @@ jobs:
 
     # Creating a cluster with network none & mounting all assets inside the container as a host.
       - run: |
-          docker run -t --rm --network none -v "$(pwd)"/assets:/kind-air-gap/assets --privileged jonsy13/kind-air-gap:latest /bin/bash -c "ls && cd assets && chmod +x kind.sh && LOG_LEVEL=info ./kind.sh"
+          docker run -it --rm --network none -v "$(pwd)"/assets:/kind-air-gap/assets --privileged jonsy13/kind-air-gap:latest /bin/bash -c "ls && cd assets && chmod +x kind.sh && LOG_LEVEL=info ./kind.sh"
                 
