@@ -11,7 +11,7 @@ jobs:
     # Pulling kind/node image
       - run: |
           mkdir assets
-          cp litmus/kind.sh assets/
+          cp ./litmus/kind.sh assets/
           docker pull kindest/node:v1.21.1 && docker save kindest/node:v1.21.1 -o assets/node.tar
 
     # Creating a cluster with network none & mounting all assets inside the container as a host.
