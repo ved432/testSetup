@@ -4,7 +4,7 @@ set -e
 echo "Setting up KIND cluster"
 
 docker load -i node.tar
-docker load -i registry:2
+docker load -i registry.tar
 
 set -o errexit
 
