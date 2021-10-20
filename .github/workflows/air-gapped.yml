@@ -14,6 +14,7 @@ jobs:
           mkdir assets
           cp ./litmus/kind.sh assets/
           docker pull kindest/node:v1.21.1 && docker save kindest/node:v1.21.1 -o assets/node.tar
+          docker pull registry:2 && docker save registry:2 -o assets/registry.tar
 
     # Creating a cluster with network none & mounting all assets inside the container as a host.
       - run: |
