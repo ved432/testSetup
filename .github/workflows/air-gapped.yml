@@ -13,8 +13,13 @@ jobs:
       - run: |
           mkdir assets
           cp ./litmus/kind.sh assets/
+          cp ./litmus/utils.sh assets/
           docker pull kindest/node:v1.21.1 && docker save kindest/node:v1.21.1 -o assets/node.tar
           docker pull registry:2 && docker save registry:2 -o assets/registry.tar
+          docker pull litmuschaos/litmusportal-frontend:ci && docker save litmuschaos/litmusportal-frontend:ci -o assets/litmusportal-frontend.tar
+          docker pull litmuschaos/litmusportal-server:ci && docker save litmusportal-server:ci -o assets/litmusportal-server.tar
+          docker pull litmuschaos/litmusportal-auth-server:ci && docker save litmusportal-auth-server:ci -o assets/litmusportal-auth-server.
+          curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output assets/litmus-portal-setup.yml
 
     # Creating a cluster with network none & mounting all assets inside the container as a host.
       - run: |
