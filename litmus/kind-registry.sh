@@ -1,10 +1,4 @@
-#!/bin/bash
-set -e
-
-echo "Setting up KIND cluster"
-
-docker load -i node.tar
-
+#!/bin/sh
 set -o errexit
 
 # create registry container unless it already exists
@@ -18,7 +12,7 @@ if [ "${running}" != 'true' ]; then
 fi
 
 # create a cluster with the local registry enabled in containerd
-cat <<EOF | kind create cluster --image kindest/node:v1.21.1 --config=-
+cat <<EOF | kind create cluster --image--config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
@@ -45,6 +39,3 @@ data:
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
-
-
-exec "$@"
