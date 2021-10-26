@@ -4,7 +4,7 @@ kind: ClusterRole
 metadata:
   name: CypressCR
   namespace: default
-  labels:
+  labe
     name: CypressCR
 rules:
   - apiGroups:
