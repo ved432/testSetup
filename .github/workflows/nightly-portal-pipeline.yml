@@ -1,21 +1,16 @@
-name: Portal-E2E-K3S-Pipeline
+name: Nightly-Portal-E2E-Pipeline
 on:
-  workflow_dispatch:
-    inputs:
-      Tag:
-        default: "ci"
-
-      Module:
-        default: "All"
+  schedule:
+    - cron: "30 22 * * *" # Daily 04:30 AM in midnight
 
 # All Environments variables declared and set here.
 env:
-  TAG: "${{github.event.inputs.Tag}}"
-  MODULE: "${{github.event.inputs.Module}}"
+  TAG: "ci"
+  MODULE: "All"
   SELF_AGENT: "self-agent"
+  EXTERNAL_AGENT: "external-agent"
   CS_MODE_NAMESPACE: "litmus"
   NS_MODE_NAMESPACE: "scope"
-  EXTERNAL_AGENT: "external-agent"
 
 # Jobs for deploying and testing litmus-portal on a KinD Cluster
 jobs:
